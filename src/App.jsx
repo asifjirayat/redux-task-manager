@@ -1,10 +1,17 @@
 import { useDispatch, useSelector } from "react-redux";
-import { deleteTask, toggleTask } from "./features/tasks/taskSlice";
+import { deleteTask, setFilter, toggleTask } from "./features/tasks/taskSlice";
 import TaskForm from "./components/TaskForm";
 
 const App = () => {
-  const { tasks } = useSelector((state) => state.tasks);
+  const { tasks, filter } = useSelector((state) => state.tasks);
   const dispatch = useDispatch();
+
+  // Filter tasks
+  const filteredTasks = tasks.filter((task) => {
+    if (filter === "active") return !task.completed;
+    if (filter === "completed") return task.completed;
+    return true;
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
@@ -16,14 +23,33 @@ const App = () => {
           <TaskForm />
         </div>
 
+        {/* Filter buttons */}
+        <div className="flex gap-2 mb-4">
+          {["all", "active", "completed"].map((filterType) => (
+            <button
+              key={filterType}
+              onClick={() => dispatch(setFilter(filterType))}
+              className={`px-2 py-1 text-xs rounded-lg capitalize transition cursor-pointer  ${
+                filter === filterType
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              }`}
+            >
+              {filterType}
+            </button>
+          ))}
+        </div>
+
         {/* Display tasks */}
         <div className="space-y-2">
-          {tasks.length === 0 ? (
+          {filteredTasks.length === 0 ? (
             <p className="text-gray-400 text-center py-8">
-              No tasks yet. Add one above!
+              {tasks.length === 0
+                ? "No tasks yet. Add one above!"
+                : `No ${filter} tasks.`}
             </p>
           ) : (
-            tasks.map((task) => (
+            filteredTasks.map((task) => (
               <div
                 key={task.id}
                 className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg group"

@@ -1,17 +1,13 @@
 import { useDispatch, useSelector } from "react-redux";
-import { addTask, toggleTask } from "./features/tasks/taskSlice";
+import { deleteTask, toggleTask } from "./features/tasks/taskSlice";
 import TaskForm from "./components/TaskForm";
 
 const App = () => {
-  const { tasks, filter } = useSelector((state) => state.tasks);
+  const { tasks } = useSelector((state) => state.tasks);
   const dispatch = useDispatch();
 
-  const handleAddTask = () => {
-    dispatch(addTask("Sample Task" + (tasks.length + 1)));
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to bg-indigo-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
       <div className="bg-white p-8 rounded-xl shadow-lg max-w-md w-full">
         <h1 className="text-3xl font-bold text-gray-800 mb-4">Task Manager</h1>
 
@@ -30,7 +26,7 @@ const App = () => {
             tasks.map((task) => (
               <div
                 key={task.id}
-                className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg"
+                className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg group"
               >
                 <input
                   type="checkbox"
@@ -43,6 +39,12 @@ const App = () => {
                 >
                   {task.text}
                 </span>
+                <button
+                  onClick={() => dispatch(deleteTask(task.id))}
+                  className="px-3 py-1 text-sm text-red-500 hover:bg-red-50 rounded transition opacity-0 group-hover:opacity-100 cursor-pointer"
+                >
+                  Delete
+                </button>
               </div>
             ))
           )}
